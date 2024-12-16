@@ -3,6 +3,6 @@ package com.example.microblog.domain.repository
 import com.example.microblog.models.User
 
 interface UserRepository {
-    suspend fun getUser(id:Int): User
-    suspend fun  getUsers(): List<User>
+    suspend fun getUser(id:Int): Result<User>
+    suspend fun  getUsers(): Result<List<User>>
 }

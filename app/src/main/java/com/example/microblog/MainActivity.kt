@@ -1,22 +1,18 @@
 package com.example.microblog
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.microblog.network.ApiService
+import com.example.microblog.ui.presentation.screens.homescreen.HomeScreen
+import com.example.microblog.ui.presentation.screens.homescreen.HomeViewModel
 import com.example.microblog.ui.theme.MicroblogTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -33,24 +29,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
+                        val homeViewModel = hiltViewModel<HomeViewModel>()
+                    HomeScreen(modifier = Modifier, viewModel = homeViewModel)
                 }
             }
         }
-        //Test the api connection
 
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                val response = apiService.getUser(1)
-                if (response.isSuccessful) {
-                    Log.d("NetworkTest", "Success: ${response.body()}")
-                } else {
-                    Log.e("NetworkTest", "Error: ${response.errorBody()?.string()}")
-                }
-            }catch ( e: Exception ){
-                Log.e("NetworkTest", "Exception: ${e.message}")
-            }
-        }
     }
 }
 

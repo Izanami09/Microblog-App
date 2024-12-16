@@ -1,5 +1,6 @@
 package com.example.microblog.di
 
+import com.example.microblog.data.UserRepositoryImpl
 import com.example.microblog.network.ApiService
 import dagger.Module
 import dagger.Provides
@@ -16,7 +17,7 @@ object AppModule {
     @Provides
     @Singleton
     fun microblogApiService() : ApiService {
-        val baseURL = "http://192.168.1.129:9000/"
+        val baseURL = "http://192.168.1.149:9000/"
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(baseURL)
@@ -26,4 +27,11 @@ object AppModule {
 
         return retrofitService
     }
+
+    @Provides
+    @Singleton
+    fun provideUserRepoImplementation(apiService: ApiService) : UserRepositoryImpl{
+        return UserRepositoryImpl(apiService)
+    }
+
 }

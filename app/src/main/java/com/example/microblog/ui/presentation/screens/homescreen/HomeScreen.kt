@@ -1,15 +1,14 @@
-package com.example.microblog.ui.screens.homescreen
+package com.example.microblog.ui.presentation.screens.homescreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -17,26 +16,63 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.microblog.models.Links
 import com.example.microblog.models.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier, userList: List<User>){
+fun HomeScreen(modifier: Modifier, viewModel: HomeViewModel){
+
+    val homeUiState by viewModel.homeUiState.collectAsState()
+
     //Creating Bottom Aligned App Bar
     Scaffold(
         topBar = {CenterAlignedTopAppBar(title = { Text(text = "Microblog")})},
         modifier = modifier
     ){
-        topBarPaddingValue -> BlogFeed(modifier = Modifier.padding(topBarPaddingValue), userList = userList )
+        topBarPaddingValue ->
+        if (homeUiState.isLoading){
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(topBarPaddingValue)
+            ) {
+                Text(text = "Content is loading")
+
+            }
+
+        }
+        else{
+            if(homeUiState.users.isEmpty())
+            {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(topBarPaddingValue)
+                ) {
+                    Text(text = "No user data found")
+
+                }
+            }
+            else {
+                BlogFeed(
+                    modifier = Modifier.padding(topBarPaddingValue),
+                    userList = homeUiState.users
+                )
+            }
+        }
+
     }
         
 }
@@ -57,20 +93,11 @@ fun BlogContainer(modifier: Modifier, user: User){
                 modifier = modifier
                     .fillMaxWidth()
                     .height(60.dp),
-                horizontalArrangement = Arrangement.Start
             ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(user.links.avatar).build(),
-                    contentDescription = "Profile Picture Of The Author",
-                    contentScale = ContentScale.Crop,
-                    modifier = modifier
-                        .width(40.dp)
-                        .fillMaxHeight()
-
-                )
-                Text(text = user.username, modifier=modifier.padding(4.dp))
+                Text(text = user.username.toString() ?: "No username", modifier=modifier.padding(4.dp).fillMaxWidth())
             }
-            Text(text = user.lastSeen)
+            println(user)
+            Text(text = user.username ?: "It is null")
             Text(text = "This is the blog")
         }
     }
