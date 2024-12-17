@@ -17,7 +17,8 @@ class SplashViewModel @Inject constructor(private val authRepositoryImpl: AuthRe
 
     init {
         viewModelScope.launch {
-            _hasToken.value = authRepositoryImpl.getToken() != null
+                _hasToken.value = authRepositoryImpl.getToken() != null
+                println(_hasToken.value.toString())
+            }
         }
     }
-}

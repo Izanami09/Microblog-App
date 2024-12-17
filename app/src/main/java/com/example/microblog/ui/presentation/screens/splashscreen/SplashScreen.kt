@@ -5,14 +5,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
     modifier: Modifier = Modifier,
-    viewModel : SplashViewModel  = hiltViewModel(),
+    viewModel : SplashViewModel,
     navController: NavController
 ){
     val hasToken by viewModel.hasToken.collectAsState()

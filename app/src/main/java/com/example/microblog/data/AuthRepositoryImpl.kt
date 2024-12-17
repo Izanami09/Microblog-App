@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.microblog.domain.repository.AuthRepository
+import com.example.microblog.models.NewUser
 import com.example.microblog.models.Token
+import com.example.microblog.models.User
 import com.example.microblog.network.ApiService
 import okhttp3.Credentials
 import javax.inject.Inject
@@ -30,6 +32,11 @@ class AuthRepositoryImpl @Inject constructor(
         return sharedPreferences.getString("TOKEN_KEY", null)
     }
 
+    fun deleteToken(){
+        sharedPreferences.edit().remove("TOKEN_KEY").apply()
+        sharedPreferences.edit().putString("TOKEN_KEY", null).apply()
+    }
+
 
     override suspend fun login(username: String, password: String): Result<Token> {
         val credentials = Credentials.basic(username, password)
@@ -53,4 +60,22 @@ class AuthRepositoryImpl @Inject constructor(
 
     }
 
+    override suspend fun registerUser(user: NewUser): Result<User> {
+        return try {
+            val response = microblogApiService.registerUser(user)
+            if (response.isSuccessful) {
+                val newUser = response.body()
+                if (newUser != null) {
+                    Result.success(newUser)
+                }else{
+                    Result.failure(Exception("Empty Response Body"))
+                }
+            }else {
+                Result.failure(Exception("Error: ${response.code()} - ${response.message()}"))
+            }
+        } catch (e : Exception){
+            Result.failure(e)
+        }
+
+    }
 }

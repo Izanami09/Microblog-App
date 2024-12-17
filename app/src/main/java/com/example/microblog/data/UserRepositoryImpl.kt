@@ -1,16 +1,17 @@
 package com.example.microblog.data
 
 import com.example.microblog.domain.repository.UserRepository
-import com.example.microblog.models.Token
 import com.example.microblog.models.User
 import com.example.microblog.network.ApiService
-import okhttp3.Credentials
 import javax.inject.Inject
 
 
 class UserRepositoryImpl @Inject constructor(
-    private val microblogApiService: ApiService
+    private val microblogApiService: ApiService,
+    private val authRepositoryImpl: AuthRepositoryImpl
 ) : UserRepository {
+    val token = authRepositoryImpl.getToken()
+
 
     override suspend fun getUser(id: Int): Result<User> {
         return try {
@@ -36,7 +37,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun getUsers(): Result<List<User>> {
             return try {
-                val response = microblogApiService.getUsers() // Call the network layer
+                val response = microblogApiService.getUsers(token = "Bearer $token") // Call the network layer
                 if (response.isSuccessful) {
                     val userResponse = response.body()
                     if (userResponse != null) {
@@ -55,6 +56,10 @@ class UserRepositoryImpl @Inject constructor(
                 Result.failure(e)
             }
         }
+
+    fun toDeleteToken(){
+        authRepositoryImpl.deleteToken()
+    }
 
 
 }

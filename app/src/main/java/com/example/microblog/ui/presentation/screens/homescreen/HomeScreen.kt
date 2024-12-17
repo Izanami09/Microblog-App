@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -23,18 +24,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.microblog.models.Links
 import com.example.microblog.models.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier, viewModel: HomeViewModel){
+fun HomeScreen(modifier: Modifier, viewModel: HomeViewModel, navController: NavController){
 
     val homeUiState by viewModel.homeUiState.collectAsState()
 
     //Creating Bottom Aligned App Bar
     Scaffold(
-        topBar = {CenterAlignedTopAppBar(title = { Text(text = "Microblog")})},
+        topBar = {CenterAlignedTopAppBar(title = { Text(text = "Microblog")}, actions = {
+            Button(onClick = {
+                viewModel.logout()
+                navController.navigate("loginScreen")
+            }) {
+                Text(text = "Logout")
+            }
+        })  },
         modifier = modifier
     ){
         topBarPaddingValue ->
@@ -44,7 +53,6 @@ fun HomeScreen(modifier: Modifier, viewModel: HomeViewModel){
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(topBarPaddingValue)
             ) {
                 Text(text = "Content is loading")
 
@@ -62,14 +70,25 @@ fun HomeScreen(modifier: Modifier, viewModel: HomeViewModel){
                         .padding(topBarPaddingValue)
                 ) {
                     Text(text = "No user data found")
+                    Button(onClick = { viewModel.retry() }) {
+                       Text(text = "Retry")
+                    }
 
                 }
             }
             else {
-                BlogFeed(
-                    modifier = Modifier.padding(topBarPaddingValue),
-                    userList = homeUiState.users
-                )
+                Column(
+                    Modifier
+                        .padding(topBarPaddingValue)
+                        .fillMaxSize()
+                        .padding(4.dp)
+                ) {
+                    BlogFeed(
+                        modifier = Modifier,
+                        userList = homeUiState.users
+                    )
+                }
+               
             }
         }
 
@@ -94,7 +113,9 @@ fun BlogContainer(modifier: Modifier, user: User){
                     .fillMaxWidth()
                     .height(60.dp),
             ) {
-                Text(text = user.username.toString() ?: "No username", modifier=modifier.padding(4.dp).fillMaxWidth())
+                Text(text = user.username.toString() ?: "No username", modifier= modifier
+                    .padding(4.dp)
+                    .fillMaxWidth())
             }
             println(user)
             Text(text = user.username ?: "It is null")

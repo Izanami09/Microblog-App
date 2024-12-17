@@ -47,8 +47,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserRepoImplementation(apiService: ApiService) : UserRepositoryImpl{
-        return UserRepositoryImpl(apiService)
+    fun provideUserRepoImplementation(apiService: ApiService, authRepositoryImpl: AuthRepositoryImpl) : UserRepositoryImpl{
+        return UserRepositoryImpl(apiService, authRepositoryImpl)
     }
 
     @Provides

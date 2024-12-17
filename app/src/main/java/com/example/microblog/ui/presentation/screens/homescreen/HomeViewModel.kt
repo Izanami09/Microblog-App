@@ -20,23 +20,40 @@ class HomeViewModel @Inject constructor(
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState : StateFlow<HomeUiState> = _homeUiState.asStateFlow()
 
+    private var hasLoaded = false
+
     init {
-        loadUsers()
+        if (!hasLoaded){
+            loadUsers()
+        }
 
     }
 
-    private fun loadUsers() {
-
+   private fun loadUsers() {
         viewModelScope.launch {
             val result = userRepositoryImpl.getUsers()
             _homeUiState.update {
                 if (result.isSuccess){
-                    it.copy(users = result.getOrNull() ?: emptyList(), isLoading = false )
+                    it.copy(isLoading = false, users = result.getOrNull() ?: emptyList() )
                 }
                 else{
                     it.copy(isLoading = false, errorMessage = result.exceptionOrNull()?.message ?: "Unknown error occured")
                 }
             }
+            hasLoaded = true
+        }
+    }
+
+
+     fun logout(){
+        viewModelScope.launch {
+            userRepositoryImpl.toDeleteToken()
+        }
+    }
+
+    fun retry(){
+        viewModelScope.launch {
+            loadUsers()
         }
     }
 

@@ -7,6 +7,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,7 +31,9 @@ fun LoginScreen(
 
     val authState by viewModel.authState.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         Text("Login", fontSize = 32.sp, fontWeight = FontWeight.Bold)
         OutlinedTextField(value = username, onValueChange = { username = it }, label = { Text("Username") })
         OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Password") }, visualTransformation = PasswordVisualTransformation())
@@ -45,11 +48,19 @@ fun LoginScreen(
 
         if (authState.success) {
             Text("Login Successful")
-            println(viewModel.login(username, password))
+        }
+
+        if (authState.isLoggedIn){
+            authState.isLoggedIn = false
+            navController.navigate("homeScreen")
         }
 
         authState.error?.let {
             Text("Error: ${it.localizedMessage}")
+        }
+
+        TextButton(onClick = { navController.navigate("registerScreen")}) {
+            Text(text = "Click To Register")
         }
     }
 }

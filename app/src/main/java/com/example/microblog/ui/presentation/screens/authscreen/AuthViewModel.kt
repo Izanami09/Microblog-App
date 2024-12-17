@@ -3,6 +3,7 @@ package com.example.microblog.ui.presentation.screens.authscreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.microblog.data.AuthRepositoryImpl
+import com.example.microblog.models.NewUser
 import com.example.microblog.ui.MicroblogUiState.AuthUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,13 +28,30 @@ class AuthViewModel @Inject constructor(
             }
             _authUiState.update {
                 if (response.isSuccess){
-                    it.copy(loading = false,success = true)
+                    it.copy(loading = false,success = true, isLoggedIn = true)
                 }else{
                     it.copy(loading = false, error = response.exceptionOrNull())
                 }
             }
             println(authRepositoryImpl.getToken())
         }
+    }
+
+    fun register(username: String, email: String, password: String){
+        viewModelScope.launch {
+            val response = authRepositoryImpl.registerUser(NewUser(username, email, password))
+
+                _authUiState.update {
+                    if (response.isSuccess) {
+                        it.copy(
+                            isUserRegistered = true
+                        )
+                    }else{
+                        it.copy(isUserRegistered = false)
+                }
+            }
+        }
+
     }
 
 
