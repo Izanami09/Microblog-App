@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.microblog.network.ApiService
-import com.example.microblog.ui.presentation.screens.homescreen.HomeScreen
-import com.example.microblog.ui.presentation.screens.homescreen.HomeViewModel
+import com.example.microblog.ui.navigation.MicroblogNavigation
 import com.example.microblog.ui.theme.MicroblogTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -29,8 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                        val homeViewModel = hiltViewModel<HomeViewModel>()
-                    HomeScreen(modifier = Modifier, viewModel = homeViewModel)
+                    MicroblogNavigation()
                 }
             }
         }

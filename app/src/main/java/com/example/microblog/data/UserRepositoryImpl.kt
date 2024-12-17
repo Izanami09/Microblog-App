@@ -1,9 +1,12 @@
 package com.example.microblog.data
 
 import com.example.microblog.domain.repository.UserRepository
+import com.example.microblog.models.Token
 import com.example.microblog.models.User
 import com.example.microblog.network.ApiService
+import okhttp3.Credentials
 import javax.inject.Inject
+
 
 class UserRepositoryImpl @Inject constructor(
     private val microblogApiService: ApiService
@@ -52,6 +55,8 @@ class UserRepositoryImpl @Inject constructor(
                 Result.failure(e)
             }
         }
-    }
+
+
+}
 
 

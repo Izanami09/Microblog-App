@@ -84,4 +84,15 @@ dependencies {
     //retrofit dependencies
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    //okayHTTP
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+
+    //forTokenEncryption
+    implementation ("androidx.security:security-crypto:1.0.0")
+
+    //dependencies for navigation
+    implementation ("androidx.navigation:navigation-compose:2.8.5")
+
+
 }
